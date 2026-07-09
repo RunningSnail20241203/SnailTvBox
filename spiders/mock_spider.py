@@ -5,7 +5,10 @@ MockSpider 模拟数据源模块
 """
 
 import random
+import logging
 from .base_spider import BaseSpider
+
+logger = logging.getLogger(__name__)
 
 
 class MockSpider(BaseSpider):
@@ -102,6 +105,9 @@ class MockSpider(BaseSpider):
                 videos.append(video)
                 self._video_dict[video["vod_id"]] = video
             self._all_videos[tid] = videos
+
+        logger.debug("MockSpider 生成 %d 个分类, 共 %d 个视频",
+                     len(self._all_videos), len(self._video_dict))
 
     def _generate_video_detail(self, tid, index, name):
         """
@@ -235,10 +241,13 @@ class MockSpider(BaseSpider):
         if len(recommend_videos) < 6 and self._all_videos.get("1"):
             recommend_videos.append(self._get_video_brief(self._all_videos["1"][1]))
 
-        return {
+        result = {
             "class": self._categories,
             "list": recommend_videos[:6]
         }
+        logger.debug("MockSpider.home_content: %d 个分类, %d 个推荐",
+                     len(result["class"]), len(result["list"]))
+        return result
 
     def home_video_content(self):
         """
@@ -276,13 +285,16 @@ class MockSpider(BaseSpider):
 
         brief_list = [self._get_video_brief(v) for v in page_videos]
 
-        return {
+        result = {
             "page": page,
             "pagecount": pagecount,
             "limit": page_size,
             "total": total,
             "list": brief_list
         }
+        logger.debug("MockSpider.category_content: tid=%s, pg=%s, total=%s, 返回 %d 条",
+                     tid, page, total, len(brief_list))
+        return result
 
     def detail_content(self, ids):
         """
@@ -295,6 +307,7 @@ class MockSpider(BaseSpider):
             dict: 视频详情数据
         """
         result_list = []
+        logger.debug("MockSpider.detail_content: ids=%s", ids)
 
         for vid in ids:
             found = False
@@ -306,7 +319,10 @@ class MockSpider(BaseSpider):
                         break
                 if found:
                     break
+            if not found:
+                logger.warning("MockSpider.detail_content: 未找到视频 id=%s", vid)
 
+        logger.debug("MockSpider.detail_content: 请求 %d 个, 找到 %d 个", len(ids), len(result_list))
         return {
             "list": result_list
         }
@@ -365,18 +381,24 @@ class MockSpider(BaseSpider):
         返回:
             dict: 播放地址数据
         """
+        logger.debug("MockSpider.player_content: flag=%s, id=%s", flag, id)
         video = self._video_dict.get(id)
         if not video:
+            logger.warning("MockSpider.player_content: 未找到视频 id=%s", id)
             return {"url": "", "parse": 0, "jx": 0}
 
         play_lines = video.get("_play_lines", [])
         for line in play_lines:
             if line["from"] == flag:
                 if line["episodes"]:
+                    logger.debug("MockSpider.player_content: 匹配线路 %s, url=%s",
+                                 flag, line["episodes"][0]["url"])
                     return {
                         "url": line["episodes"][0]["url"],
                         "parse": 0,
                         "jx": 0
                     }
 
+        available_flags = [line["from"] for line in play_lines]
+        logger.warning("MockSpider.player_content: 未匹配到线路 flag=%s, 可用=%s", flag, available_flags)
         return {"url": "", "parse": 0, "jx": 0}

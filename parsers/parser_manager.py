@@ -12,7 +12,10 @@
 """
 
 from typing import List, Dict, Optional
+import logging
 from .base_parser import BaseParser
+
+logger = logging.getLogger(__name__)
 
 
 class ParserManager:
@@ -54,6 +57,7 @@ class ParserManager:
             self._parsers.append(parser)
             # 按优先级排序（数字小的优先）
             self._parsers.sort(key=lambda p: p.priority)
+            logger.debug("注册解析器: %s (priority=%d)", parser.name, parser.priority)
     
     def unregister(self, parser: BaseParser) -> bool:
         """移除解析器
@@ -112,6 +116,7 @@ class ParserManager:
             标准化的解析结果字典
         """
         if not url:
+            logger.error("原始 URL 为空，无法解析")
             return {
                 "url": "",
                 "title": "",
@@ -122,23 +127,30 @@ class ParserManager:
                 "success": False,
                 "error": "URL 为空"
             }
-        
+
+        logger.info("开始解析: %s", url)
         current_url = url
         depth = 0
         last_result = None
-        
+
         while depth < max_depth:
             # 找到能处理当前 URL 的解析器
             matched_parser = None
             for parser in self._parsers:
-                if parser.can_parse(current_url):
+                try:
+                    can = parser.can_parse(current_url)
+                except Exception:
+                    logger.error("解析器 %s.can_parse 异常", parser.name, exc_info=True)
+                    can = False
+                if can:
                     matched_parser = parser
                     break
-            
+
             if matched_parser is None:
                 # 没有解析器能处理了
                 if last_result is None:
                     # 从未成功解析过
+                    logger.warning("没有解析器能处理此 URL: %s", current_url)
                     return {
                         "url": current_url,
                         "title": "",
@@ -151,41 +163,48 @@ class ParserManager:
                     }
                 else:
                     # 之前解析过，返回最后成功的结果
+                    logger.debug("无更多解析器可用，返回最后成功结果")
                     return last_result
-            
+
             # 执行解析
-            print(f"[ParserManager] 使用 {matched_parser.name} 解析: {current_url[:80]}...")
+            logger.debug("使用解析器: %s, URL: %s", matched_parser.name, current_url[:80])
             result = matched_parser.parse(current_url)
-            
+
             # 检查是否解析成功
             if not result.get("success", False):
+                logger.warning("解析器 %s 失败: %s", matched_parser.name, result.get("error", "未知错误"))
                 return result
-            
+
             # 更新最后成功的结果
             last_result = result
-            
+            logger.debug("解析结果: success=True, parse=%s, url=%s",
+                         result.get("parse", 0), result.get("url", "")[:80])
+
             # 检查是否需要继续解析
             if result.get("parse", 0) == 0:
                 # 不需要继续解析了
+                logger.info("解析完成: success=True, url=%s", result.get("url", "")[:80])
                 return result
-            
+
             # 需要继续解析，获取新的 URL
             new_url = result.get("url", "")
             if not new_url:
                 # 新 URL 为空，无法继续
+                logger.error("解析返回的 URL 为空，无法继续链式解析")
                 result["error"] = "解析返回的 URL 为空"
                 return result
-            
+
             if new_url == current_url:
                 # URL 没变化，防止无限循环
+                logger.warning("解析后 URL 未变化，强制结束: %s", current_url)
                 result["parse"] = 0  # 强制结束
                 result["error"] = "解析后 URL 未变化"
                 return result
-            
+
             # 更新 URL，继续下一轮解析
             current_url = new_url
             depth += 1
-            print(f"[ParserManager] 继续解析 (深度 {depth}): {current_url[:80]}...")
+            logger.debug("继续链式解析 (深度 %d): %s", depth, current_url[:80])
         
         # 达到最大深度
         return {

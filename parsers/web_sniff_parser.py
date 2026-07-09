@@ -12,9 +12,12 @@ WebSniffParser - type=0 WebView 嗅探/HTTP 解析器
 
 import re
 import requests
+import logging
 from typing import Dict, List, Optional
 from urllib.parse import urljoin
 from .base_parser import BaseParser
+
+logger = logging.getLogger(__name__)
 
 
 class WebSniffParser(BaseParser):
@@ -114,24 +117,30 @@ class WebSniffParser(BaseParser):
             url: 视频页面地址
         """
         if not url:
+            logger.error("WebSniffParser.parse: URL 为空")
             return {"url": "", "success": False, "error": "URL 为空"}
 
+        logger.info("Web嗅探解析: %s", url)
         try:
-            print(f"[WebSniffParser] 请求页面: {url[:80]}...")
+            logger.debug("请求页面 HTML, timeout=%s", self.timeout)
             response = self._session.get(url, timeout=self.timeout, allow_redirects=True)
             response.raise_for_status()
             response.encoding = response.apparent_encoding or 'utf-8'
             html = response.text
+            logger.debug("响应: status=%s, html 长度=%d", response.status_code, len(html))
 
             # 尝试多种模式提取视频地址
             video_url = self._extract_video_url(html, url)
 
             if not video_url:
+                logger.warning("未能在页面中找到视频地址: %s", url)
                 return {
                     "url": "",
                     "success": False,
                     "error": "未能在页面中找到视频地址"
                 }
+
+            logger.debug("提取到视频地址: %s", video_url)
 
             # 判断格式
             format_type = "unknown"
@@ -154,12 +163,16 @@ class WebSniffParser(BaseParser):
             }
 
         except requests.exceptions.Timeout:
+            logger.error("请求超时（%s秒）: %s", self.timeout, url, exc_info=True)
             return {"url": "", "success": False, "error": f"请求超时（{self.timeout}秒）"}
         except requests.exceptions.ConnectionError as e:
+            logger.error("连接失败: %s, url=%s", e, url, exc_info=True)
             return {"url": "", "success": False, "error": f"连接失败: {str(e)[:100]}"}
         except requests.exceptions.HTTPError as e:
+            logger.error("HTTP错误: %s, url=%s", e.response.status_code, url, exc_info=True)
             return {"url": "", "success": False, "error": f"HTTP错误: {e.response.status_code}"}
         except Exception as e:
+            logger.error("解析失败: %s, url=%s", e, url, exc_info=True)
             return {"url": "", "success": False, "error": f"解析失败: {str(e)[:100]}"}
 
     def _extract_video_url(self, html: str, base_url: str) -> Optional[str]:

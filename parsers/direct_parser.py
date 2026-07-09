@@ -7,7 +7,10 @@
 """
 
 from typing import Dict
+import logging
 from .base_parser import BaseParser
+
+logger = logging.getLogger(__name__)
 
 
 class DirectParser(BaseParser):
@@ -50,17 +53,19 @@ class DirectParser(BaseParser):
         """
         if not url:
             return False
-        
+
         url_lower = url.lower().split('?')[0]  # 忽略查询参数
-        
+
         # 判断是否包含视频后缀
         for ext in self.VIDEO_EXTENSIONS:
             if url_lower.endswith(ext):
+                logger.debug("DirectParser.can_parse(%s) = True (后缀=%s)", url[:80], ext)
                 return True
             # 有些地址可能是 xxx.m3u8?token=xxx 格式
             if ext in url_lower:
+                logger.debug("DirectParser.can_parse(%s) = True (包含 %s)", url[:80], ext)
                 return True
-        
+
         return False
     
     def parse(self, url: str) -> Dict:
@@ -91,7 +96,8 @@ class DirectParser(BaseParser):
             format_type = "mkv"
         elif ".avi" in url_lower:
             format_type = "avi"
-        
+
+        logger.debug("DirectParser 直链通过: format=%s, url=%s", format_type, url[:80])
         return {
             "url": url,
             "title": "",

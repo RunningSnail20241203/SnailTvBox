@@ -4,6 +4,10 @@
 VodInfo 对应视频详情数据
 """
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class VodInfo:
     """
@@ -165,7 +169,11 @@ class VodInfo:
         play_list = []
 
         if not self._vod_play_from or not self._vod_play_url:
+            logger.debug("parse_play_list: vod_play_from 或 vod_play_url 为空, from=%r, url=%r",
+                         self._vod_play_from[:50], self._vod_play_url[:100])
             return play_list
+
+        logger.debug("parse_play_list: 开始解析, vod_play_url=%s", self._vod_play_url[:100])
 
         from_list = self._vod_play_from.split("$")
         url_list = self._vod_play_url.split("$")
@@ -194,6 +202,7 @@ class VodInfo:
                 else:
                     ep_name = episode_str
                     ep_url = ""
+                    logger.warning("剧集 URL 为空: name=%r, 原始字符串=%r", ep_name, episode_str)
 
                 episodes.append({
                     "name": ep_name,
@@ -205,6 +214,7 @@ class VodInfo:
                     "from": line_name,
                     "episodes": episodes
                 })
+                logger.debug("解析线路: from=%s, 剧集数=%d", line_name, len(episodes))
 
         return play_list
 

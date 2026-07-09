@@ -14,7 +14,10 @@ SpiderParseParser - type=3 Spider 解析器
 """
 
 from typing import Dict, List, Optional
+import logging
 from .base_parser import BaseParser
+
+logger = logging.getLogger(__name__)
 
 
 class SpiderParseParser(BaseParser):
@@ -92,9 +95,11 @@ class SpiderParseParser(BaseParser):
             url: 待解析的视频地址
         """
         if not url:
+            logger.error("SpiderParseParser.parse: URL 为空")
             return {"url": "", "success": False, "error": "URL 为空"}
 
         if self.spider is None:
+            logger.warning("Spider 实例未设置，无法解析: %s", url[:80])
             return {
                 "url": "",
                 "success": False,
@@ -102,7 +107,7 @@ class SpiderParseParser(BaseParser):
             }
 
         try:
-            print(f"[SpiderParseParser] 调用 Spider 解析: {url[:80]}...")
+            logger.info("调用 Spider 解析: %s", url[:80])
 
             # 调用 Spider 的 playerContent 方法
             # 参数: playerContent(String flag, String id, List<String> vipFlags)
@@ -116,6 +121,7 @@ class SpiderParseParser(BaseParser):
             # 提取播放地址
             play_url = result.get("url", "")
             if not play_url:
+                logger.warning("Spider 返回结果中未找到播放地址: %s", result_json[:200])
                 return {
                     "url": "",
                     "success": False,
@@ -124,6 +130,7 @@ class SpiderParseParser(BaseParser):
 
             # 判断是否需要继续解析
             parse_flag = result.get("parse", 0)
+            logger.debug("Spider 返回: url=%s, parse=%s", play_url[:80], parse_flag)
 
             # 判断格式
             format_type = "unknown"
@@ -146,8 +153,10 @@ class SpiderParseParser(BaseParser):
             }
 
         except json.JSONDecodeError as e:
+            logger.error("Spider 返回 JSON 解析失败: %s", e, exc_info=True)
             return {"url": "", "success": False, "error": f"Spider 返回 JSON 解析失败: {str(e)[:100]}"}
         except Exception as e:
+            logger.error("Spider 解析失败: %s", e, exc_info=True)
             return {"url": "", "success": False, "error": f"Spider 解析失败: {str(e)[:100]}"}
 
     def set_spider(self, spider_instance):

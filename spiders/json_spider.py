@@ -7,7 +7,11 @@ JSON 接口爬虫模块（type=1）
 import requests
 import json
 import re
+import logging
+import time
 from .base_spider import BaseSpider
+
+logger = logging.getLogger(__name__)
 
 
 class JsonSpider(BaseSpider):
@@ -65,21 +69,25 @@ class JsonSpider(BaseSpider):
             dict: 解析后的 JSON 数据，失败返回 None
         """
         try:
+            logger.debug("HTTP GET: %s, params=%s, timeout=%s", url, params, self.timeout)
+            start_time = time.time()
             resp = self.session.get(url, params=params, timeout=self.timeout)
+            elapsed = time.time() - start_time
 
             resp.encoding = resp.apparent_encoding
 
             text = resp.text.strip()
+            logger.debug("响应: status=%s, length=%d, 耗时=%.2fs", resp.status_code, len(text), elapsed)
 
             return self._parse_json(text)
         except requests.exceptions.Timeout:
-            print(f"[JsonSpider] 请求超时: {url}")
+            logger.error("请求超时: %s (timeout=%ss)", url, self.timeout, exc_info=True)
             return None
         except requests.exceptions.ConnectionError:
-            print(f"[JsonSpider] 连接失败: {url}")
+            logger.error("连接失败: %s", url, exc_info=True)
             return None
         except Exception as e:
-            print(f"[JsonSpider] 请求失败: {e}, URL: {url}")
+            logger.error("请求失败: %s, URL: %s", e, url, exc_info=True)
             return None
 
     def _parse_json(self, text):
@@ -97,7 +105,7 @@ class JsonSpider(BaseSpider):
             dict: 解析后的 JSON 数据，失败返回 None
         """
         if not text:
-            print("[JsonSpider] JSON 解析失败: 响应为空")
+            logger.warning("JSON 解析失败: 响应为空")
             return None
 
         try:
@@ -112,7 +120,7 @@ class JsonSpider(BaseSpider):
             except json.JSONDecodeError:
                 pass
 
-        print(f"[JsonSpider] JSON 解析失败，响应前200字: {text[:200]}")
+        logger.warning("JSON 解析失败，响应前200字: %s", text[:200])
         return None
 
     def _extract_vod_brief(self, item):
@@ -174,10 +182,13 @@ class JsonSpider(BaseSpider):
         }
 
         if not self.api_url:
+            logger.warning("home_content: api_url 为空，返回空结果")
             return result
 
+        logger.info("home_content: 请求首页数据, api=%s", self.api_url)
         data = self._get(self.api_url, params={"ac": "list"})
         if not data:
+            logger.warning("home_content: 请求失败或返回空")
             return result
 
         if "class" in data and isinstance(data["class"], list):
@@ -195,6 +206,7 @@ class JsonSpider(BaseSpider):
                 if isinstance(item, dict):
                     result["list"].append(self._extract_vod_brief(item))
 
+        logger.debug("home_content 返回: %d 个分类, %d 个推荐", len(result["class"]), len(result["list"]))
         return result
 
     def category_content(self, tid, pg, filter=False, extend=None):
@@ -223,8 +235,10 @@ class JsonSpider(BaseSpider):
         }
 
         if not self.api_url:
+            logger.warning("category_content: api_url 为空")
             return result
 
+        logger.info("category_content: tid=%s, pg=%s", tid, page)
         params = {
             "ac": "detail",
             "t": tid,
@@ -233,37 +247,40 @@ class JsonSpider(BaseSpider):
 
         data = self._get(self.api_url, params=params)
         if not data:
+            logger.warning("category_content: 请求失败或返回空, tid=%s, pg=%s", tid, page)
             return result
 
         if "page" in data:
             try:
                 result["page"] = int(data["page"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("category_content: page 字段类型转换失败, 原始值=%r", data["page"])
 
         if "pagecount" in data:
             try:
                 result["pagecount"] = int(data["pagecount"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("category_content: pagecount 字段类型转换失败, 原始值=%r", data["pagecount"])
 
         if "limit" in data:
             try:
                 result["limit"] = int(data["limit"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("category_content: limit 字段类型转换失败, 原始值=%r", data["limit"])
 
         if "total" in data:
             try:
                 result["total"] = int(data["total"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("category_content: total 字段类型转换失败, 原始值=%r", data["total"])
 
         if "list" in data and isinstance(data["list"], list):
             for item in data["list"]:
                 if isinstance(item, dict):
                     result["list"].append(self._extract_vod_brief(item))
 
+        logger.debug("category_content 返回: page=%s, pagecount=%s, total=%s, list=%d",
+                     result["page"], result["pagecount"], result["total"], len(result["list"]))
         return result
 
     def detail_content(self, ids):
@@ -283,9 +300,11 @@ class JsonSpider(BaseSpider):
         }
 
         if not self.api_url or not ids:
+            logger.warning("detail_content: api_url=%s, ids=%s", self.api_url, ids)
             return result
 
         ids_str = ",".join([str(x) for x in ids])
+        logger.info("detail_content: ids=%s", ids_str)
 
         params = {
             "ac": "detail",
@@ -294,6 +313,7 @@ class JsonSpider(BaseSpider):
 
         data = self._get(self.api_url, params=params)
         if not data:
+            logger.warning("detail_content: 请求失败或返回空, ids=%s", ids_str)
             return result
 
         if "list" in data and isinstance(data["list"], list):
@@ -301,6 +321,7 @@ class JsonSpider(BaseSpider):
                 if isinstance(item, dict):
                     result["list"].append(self._extract_vod_detail(item))
 
+        logger.debug("detail_content 返回: %d 条详情", len(result["list"]))
         return result
 
     def search_content(self, key, quick=False, pg="1"):
@@ -328,8 +349,10 @@ class JsonSpider(BaseSpider):
         }
 
         if not self.api_url or not key:
+            logger.warning("search_content: api_url=%s, key=%s", self.api_url, key)
             return result
 
+        logger.info("search_content: key=%s, pg=%s", key, page)
         params = {
             "ac": "detail",
             "wd": key,
@@ -338,37 +361,39 @@ class JsonSpider(BaseSpider):
 
         data = self._get(self.api_url, params=params)
         if not data:
+            logger.warning("search_content: 请求失败或返回空, key=%s", key)
             return result
 
         if "page" in data:
             try:
                 result["page"] = int(data["page"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("search_content: page 字段类型转换失败, 原始值=%r", data["page"])
 
         if "pagecount" in data:
             try:
                 result["pagecount"] = int(data["pagecount"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("search_content: pagecount 字段类型转换失败, 原始值=%r", data["pagecount"])
 
         if "limit" in data:
             try:
                 result["limit"] = int(data["limit"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("search_content: limit 字段类型转换失败, 原始值=%r", data["limit"])
 
         if "total" in data:
             try:
                 result["total"] = int(data["total"])
             except (ValueError, TypeError):
-                pass
+                logger.warning("search_content: total 字段类型转换失败, 原始值=%r", data["total"])
 
         if "list" in data and isinstance(data["list"], list):
             for item in data["list"]:
                 if isinstance(item, dict):
                     result["list"].append(self._extract_vod_brief(item))
 
+        logger.debug("search_content 返回: total=%s, list=%d", result["total"], len(result["list"]))
         return result
 
     def player_content(self, flag, id, vip_flags=None):
@@ -388,6 +413,7 @@ class JsonSpider(BaseSpider):
         返回:
             dict: 播放地址数据
         """
+        logger.debug("player_content: flag=%s, id=%s, vip_flags=%s", flag, id, vip_flags)
         return {
             "url": "",
             "parse": 0,

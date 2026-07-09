@@ -15,9 +15,12 @@ JS变量解析器
 
 import re
 import requests
+import logging
 from typing import Dict, Optional
 from urllib.parse import urljoin, urlparse
 from .base_parser import BaseParser
+
+logger = logging.getLogger(__name__)
 
 
 class JsVariableParser(BaseParser):
@@ -102,20 +105,22 @@ class JsVariableParser(BaseParser):
         """
         if not url:
             return False
-        
+
         url_lower = url.lower()
-        
+
         # 检查是否包含 share 路径
         if '/share/' in url_lower:
+            logger.debug("JsVariableParser.can_parse(%s) = True (含 /share/)", url[:80])
             return True
-        
+
         # 检查域名是否在支持列表中
         parsed = urlparse(url)
         domain = parsed.netloc.lower()
         for supported in self.SUPPORTED_DOMAINS:
             if supported in domain:
+                logger.debug("JsVariableParser.can_parse(%s) = True (域名匹配 %s)", url[:80], supported)
                 return True
-        
+
         return False
     
     def parse(self, url: str) -> Dict:
@@ -134,6 +139,7 @@ class JsVariableParser(BaseParser):
             标准化的解析结果
         """
         if not url:
+            logger.error("JsVariableParser.parse: URL 为空")
             return {
                 "url": "",
                 "title": "",
@@ -144,20 +150,23 @@ class JsVariableParser(BaseParser):
                 "success": False,
                 "error": "URL 为空"
             }
-        
+
+        logger.info("解析分享页: %s", url)
         try:
             # 请求页面
-            print(f"[JsVariableParser] 正在请求页面: {url[:80]}...")
+            logger.debug("请求页面 HTML, timeout=%s", self.timeout)
             response = self._session.get(url, timeout=self.timeout)
             response.raise_for_status()
-            
+
             # 自动处理编码
             response.encoding = response.apparent_encoding or 'utf-8'
             html = response.text
-            
+            logger.debug("响应: status=%s, html 长度=%d", response.status_code, len(html))
+
             # 提取播放地址
             play_url = self._extract_url(html, url)
             if not play_url:
+                logger.warning("未能在页面中找到播放地址: %s", url)
                 return {
                     "url": "",
                     "title": "",
@@ -168,24 +177,27 @@ class JsVariableParser(BaseParser):
                     "success": False,
                     "error": "未能在页面中找到播放地址"
                 }
-            
+
+            logger.debug("提取到播放地址: %s", play_url)
+
             # 提取封面图
             pic_url = self._extract_pic(html, url)
-            
+
             # 提取标题（从页面 title 标签）
             title = self._extract_title(html)
-            
+
             # 判断格式
             format_type = "unknown"
             if ".m3u8" in play_url:
                 format_type = "m3u8"
             elif ".mp4" in play_url:
                 format_type = "mp4"
-            
+
             # 判断是否需要继续解析
             # 如果已经是视频格式，parse=0；否则继续
             need_parse = 0 if DirectParser().can_parse(play_url) else 0
-            
+
+            logger.info("分享页解析成功: url=%s, format=%s", play_url[:80], format_type)
             return {
                 "url": play_url,
                 "title": title,
@@ -196,8 +208,9 @@ class JsVariableParser(BaseParser):
                 "success": True,
                 "error": ""
             }
-            
+
         except requests.exceptions.Timeout:
+            logger.error("请求超时（%s秒）: %s", self.timeout, url, exc_info=True)
             return {
                 "url": "",
                 "title": "",
@@ -209,6 +222,7 @@ class JsVariableParser(BaseParser):
                 "error": f"请求超时（{self.timeout}秒）"
             }
         except requests.exceptions.ConnectionError as e:
+            logger.error("连接失败: %s, url=%s", e, url, exc_info=True)
             return {
                 "url": "",
                 "title": "",
@@ -220,6 +234,7 @@ class JsVariableParser(BaseParser):
                 "error": f"连接失败: {str(e)[:100]}"
             }
         except requests.exceptions.HTTPError as e:
+            logger.error("HTTP错误: %s, url=%s", e.response.status_code, url, exc_info=True)
             return {
                 "url": "",
                 "title": "",
@@ -231,6 +246,7 @@ class JsVariableParser(BaseParser):
                 "error": f"HTTP错误: {e.response.status_code}"
             }
         except Exception as e:
+            logger.error("解析失败: %s, url=%s", e, url, exc_info=True)
             return {
                 "url": "",
                 "title": "",

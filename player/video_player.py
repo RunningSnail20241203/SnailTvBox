@@ -8,8 +8,11 @@
 import os
 import subprocess
 import shutil
+import logging
 from typing import List, Dict, Optional
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 class VideoPlayer:
@@ -82,6 +85,9 @@ class VideoPlayer:
             })
         
         self._detected = True
+        logger.info("检测到 %d 个播放器: %s",
+                    len(self._available_players),
+                    [p["name"] for p in self._available_players] or "无")
         return self._available_players.copy()
     
     def _find_vlc(self) -> Optional[str]:
@@ -93,13 +99,16 @@ class VideoPlayer:
         # 先检查 PATH
         vlc_in_path = shutil.which("vlc")
         if vlc_in_path:
+            logger.debug("通过 PATH 找到 VLC: %s", vlc_in_path)
             return vlc_in_path
-        
+
         # 检查常见安装路径
         for path in self.VLC_PATHS:
             if os.path.isfile(path):
+                logger.debug("通过安装路径找到 VLC: %s", path)
                 return path
-        
+
+        logger.debug("未找到 VLC 播放器")
         return None
     
     def _find_mpv(self) -> Optional[str]:
@@ -111,13 +120,16 @@ class VideoPlayer:
         # 先检查 PATH
         mpv_in_path = shutil.which("mpv")
         if mpv_in_path:
+            logger.debug("通过 PATH 找到 mpv: %s", mpv_in_path)
             return mpv_in_path
-        
+
         # 检查常见安装路径
         for path in self.MPV_PATHS:
             if os.path.isfile(path):
+                logger.debug("通过安装路径找到 mpv: %s", path)
                 return path
-        
+
+        logger.debug("未找到 mpv 播放器")
         return None
     
     def has_player(self) -> bool:
@@ -163,15 +175,17 @@ class VideoPlayer:
             }
         """
         if not url:
+            logger.warning("播放地址为空，无法启动播放器")
             return {
                 "success": False,
                 "player": None,
                 "error": "视频地址为空"
             }
-        
+
         # 检测播放器
         players = self.detect_players()
         if not players:
+            logger.error("未检测到播放器，请安装 VLC 或 mpv")
             return {
                 "success": False,
                 "player": None,
@@ -199,11 +213,10 @@ class VideoPlayer:
         # 启动播放器
         player_path = player_info["path"]
         player_name = player_info["name"]
-        
+
+        logger.info("启动播放器: %s, url=%s", player_name, url[:80])
+
         try:
-            print(f"[VideoPlayer] 正在启动 {player_name}...")
-            print(f"[VideoPlayer] 播放地址: {url}")
-            
             # 使用 subprocess 启动播放器
             # Popen 不等待进程结束，所以不会阻塞
             if player_info["type"] == "vlc":
@@ -221,20 +234,23 @@ class VideoPlayer:
                     stderr=subprocess.DEVNULL,
                     creationflags=subprocess.CREATE_NO_WINDOW
                 )
-            
+
+            logger.debug("播放器进程已启动: %s", player_path)
             return {
                 "success": True,
                 "player": player_name,
                 "error": ""
             }
-            
+
         except FileNotFoundError:
+            logger.error("播放器不存在: %s", player_path, exc_info=True)
             return {
                 "success": False,
                 "player": player_name,
                 "error": f"播放器不存在: {player_path}"
             }
         except Exception as e:
+            logger.error("启动播放器失败: %s", e, exc_info=True)
             return {
                 "success": False,
                 "player": player_name,

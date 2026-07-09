@@ -22,8 +22,11 @@ GET https://jx.m3u8.tv/jx/jx.php?url={视频地址}
 
 import requests
 import json
+import logging
 from typing import Dict, List
 from .base_parser import BaseParser
+
+logger = logging.getLogger(__name__)
 
 
 class JsonApiParser(BaseParser):
@@ -108,15 +111,17 @@ class JsonApiParser(BaseParser):
             url: 待解析的视频地址
         """
         if not url:
+            logger.error("JsonApiParser.parse: URL 为空")
             return {"url": "", "success": False, "error": "URL 为空"}
 
         try:
             # 构造完整的 API URL
             full_url = self._build_api_url(url)
-            print(f"[JsonApiParser] 调用解析接口: {full_url[:80]}...")
+            logger.info("调用 JSON 解析接口: %s", full_url[:80])
 
             response = self._session.get(full_url, timeout=self.timeout)
             response.raise_for_status()
+            logger.debug("响应: status=%s, length=%s", response.status_code, len(response.text))
 
             # 尝试解析 JSON
             try:
@@ -124,6 +129,7 @@ class JsonApiParser(BaseParser):
             except json.JSONDecodeError:
                 # 可能返回的是 JSONP 格式（callback({...})）
                 text = response.text.strip()
+                logger.debug("响应非标准 JSON，尝试 JSONP 解析: %s", text[:100])
                 if text.startswith('(') and text.endswith(')'):
                     text = text[1:-1]
                 data = json.loads(text)
@@ -132,11 +138,14 @@ class JsonApiParser(BaseParser):
             video_url = self._extract_url_from_json(data)
 
             if not video_url:
+                logger.warning("JSON 响应中未找到播放地址: %s", str(data)[:200])
                 return {
                     "url": "",
                     "success": False,
                     "error": f"JSON 响应中未找到播放地址，响应: {str(data)[:200]}"
                 }
+
+            logger.debug("提取到播放地址: %s", video_url)
 
             # 判断格式
             format_type = "unknown"
@@ -159,12 +168,16 @@ class JsonApiParser(BaseParser):
             }
 
         except requests.exceptions.Timeout:
+            logger.error("请求超时（%s秒）: %s", self.timeout, full_url[:80], exc_info=True)
             return {"url": "", "success": False, "error": f"请求超时（{self.timeout}秒）"}
         except requests.exceptions.ConnectionError as e:
+            logger.error("连接失败: %s, url=%s", e, full_url[:80], exc_info=True)
             return {"url": "", "success": False, "error": f"连接失败: {str(e)[:100]}"}
         except json.JSONDecodeError as e:
+            logger.error("JSON 解析失败: %s, url=%s", e, full_url[:80], exc_info=True)
             return {"url": "", "success": False, "error": f"JSON 解析失败: {str(e)[:100]}"}
         except Exception as e:
+            logger.error("解析失败: %s, url=%s", e, full_url[:80], exc_info=True)
             return {"url": "", "success": False, "error": f"解析失败: {str(e)[:100]}"}
 
     def _build_api_url(self, video_url: str) -> str:

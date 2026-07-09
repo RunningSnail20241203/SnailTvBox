@@ -214,3 +214,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# 项目日志目录（含滚动备份文件 tvbox.log.1/.2/.3）
+logs/
