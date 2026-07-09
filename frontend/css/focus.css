@@ -1,0 +1,90 @@
+/* === Focus Management System === */
+
+/* Focusable element base */
+[data-focusable] {
+  position: relative;
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+/* Focus indicator - glowing blue border */
+[data-focusable].focused {
+  box-shadow: var(--shadow-focus);
+  transform: scale(1.02);
+  z-index: 10;
+}
+
+/* Focus ring animation */
+[data-focusable].focused::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid var(--accent-primary);
+  opacity: 0;
+  animation: focusRingIn 0.2s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes focusRingIn {
+  0% { opacity: 0; transform: scale(1.05); }
+  100% { opacity: 0.6; transform: scale(1); }
+}
+
+/* Card-specific focus */
+[data-focusable].focused.card-item {
+  box-shadow: var(--shadow-focus), var(--shadow-float);
+  border-color: var(--accent-primary);
+}
+
+/* Tab-specific focus */
+[data-focusable].focused.tab-item {
+  box-shadow: none;
+  transform: scale(1);
+}
+
+[data-focusable].focused.tab-item::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 8px var(--accent-primary);
+}
+
+/* Button-specific focus */
+[data-focusable].focused.btn {
+  box-shadow: var(--shadow-focus);
+}
+
+/* Input-specific focus */
+[data-focusable].focused.input-field {
+  box-shadow: var(--shadow-focus);
+  border-color: var(--accent-primary);
+}
+
+/* Keyboard item focus */
+[data-focusable].focused.key-item {
+  box-shadow: var(--shadow-focus);
+  background: var(--accent-primary-dim);
+}
+
+/* Disable focus on mouse-hover for touch devices */
+@media (hover: none) {
+  [data-focusable]:not(.focused) {
+    box-shadow: none;
+  }
+
+  [data-focusable].focused {
+    box-shadow: 0 0 0 2px var(--accent-primary);
+    transform: none;
+  }
+}
+
+/* Focus zone container */
+[data-focus-zone] {
+  outline: none;
+}

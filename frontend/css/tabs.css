@@ -1,0 +1,160 @@
+/* === Tab Bar === */
+
+.tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--tab-bar-height);
+  padding: 0 var(--space-2xl);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+.tab-bar-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  height: 100%;
+  position: relative;
+}
+
+/* Individual tab item */
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 var(--space-lg);
+  height: 100%;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+}
+
+.tab-item:hover {
+  color: var(--text-primary);
+}
+
+.tab-item .tab-icon {
+  font-size: var(--font-size-lg);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tab-item .tab-label {
+  line-height: 1;
+}
+
+/* Active/selected tab */
+.tab-item.active {
+  color: var(--accent-primary);
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - var(--space-lg) * 2);
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+  animation: tabUnderlineGlow 2s ease-in-out infinite;
+}
+
+/* Category sub-tabs (used in home page) */
+.sub-tab-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  overflow-x: auto;
+  flex-shrink: 0;
+  background: var(--bg-primary);
+  -webkit-overflow-scrolling: touch;
+}
+
+.sub-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.sub-tab-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.sub-tab-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.sub-tab-item.active {
+  color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+  border-color: var(--accent-primary);
+}
+
+/* Route tabs in player */
+.route-tab-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.route-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.route-tab-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.route-tab-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+
+.route-tab-item.active {
+  color: var(--text-inverse);
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}

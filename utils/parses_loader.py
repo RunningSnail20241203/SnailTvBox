@@ -1,0 +1,124 @@
+# -*- coding: utf-8 -*-
+"""
+ParsesLoader - Parses 解析器加载器
+
+负责从 ParseBean 列表创建对应的解析器实例，并注册到 ParserManager 中。
+
+这是连接 TvBox 配置（parses 字段）和我们解析器架构的桥梁。
+
+使用方式：
+    config_loader = ConfigLoader()
+    config_loader.load_from_file("jsm.json")
+    
+    parser_manager = ParserManager()
+    ParsesLoader.load_into_manager(config_loader.parses, parser_manager)
+    
+    # 现在 parser_manager 中已经注册了所有 parses 对应的解析器
+    result = parser_manager.parse("https://xxx.com/video")
+"""
+
+from typing import List
+from models.parse_bean import ParseBean
+from parsers import (
+    ParserManager,
+    WebSniffParser,
+    JsonApiParser,
+    SpiderParseParser,
+)
+
+
+class ParsesLoader:
+    """Parses 解析器加载器
+
+    根据 ParseBean 的 type 字段，创建对应的解析器实例：
+    - type=0 → WebSniffParser
+    - type=1 → JsonApiParser
+    - type=3 → SpiderParseParser
+    - type=2, 4 → 暂不支持
+
+    然后将解析器注册到 ParserManager 中，使其参与链式解析。
+    """
+
+    @staticmethod
+    def create_parser(parse_bean: ParseBean):
+        """根据 ParseBean 创建对应的解析器实例
+
+        参数:
+            parse_bean: 解析源配置
+
+        返回:
+            解析器实例，如果 type 不支持则返回 None
+        """
+        if not parse_bean or not parse_bean.url:
+            return None
+
+        name = parse_bean.name or "Unknown"
+
+        if parse_bean.type == 0:
+            # type=0: WebView 嗅探 / HTTP 解析
+            return WebSniffParser(
+                flag=parse_bean.flag,
+                ext=parse_bean.ext,
+            )
+
+        elif parse_bean.type == 1:
+            # type=1: JSON 解析接口
+            return JsonApiParser(
+                api_url=parse_bean.url,
+                flag=parse_bean.flag,
+                ext=parse_bean.ext,
+            )
+
+        elif parse_bean.type == 3:
+            # type=3: Spider 解析
+            return SpiderParseParser(
+                flag=parse_bean.flag,
+                ext=parse_bean.ext,
+            )
+
+        else:
+            print(f"[ParsesLoader] 不支持的解析类型: type={parse_bean.type}, name={name}")
+            return None
+
+    @staticmethod
+    def load_into_manager(parses: List[ParseBean], manager: ParserManager) -> int:
+        """将 ParseBean 列表批量加载到 ParserManager
+
+        参数:
+            parses: ParseBean 列表
+            manager: ParserManager 实例
+
+        返回:
+            成功注册的解析器数量
+        """
+        if not parses or not manager:
+            return 0
+
+        registered_count = 0
+
+        for parse_bean in parses:
+            parser = ParsesLoader.create_parser(parse_bean)
+            if parser:
+                manager.register(parser)
+                registered_count += 1
+                print(f"[ParsesLoader] 注册解析器: {parse_bean.name} ({parse_bean.get_type_name()})")
+
+        print(f"[ParsesLoader] 共注册 {registered_count}/{len(parses)} 个解析器")
+        return registered_count
+
+    @staticmethod
+    def load_from_config(config_loader, manager: ParserManager) -> int:
+        """从 ConfigLoader 直接加载 parses 到 ParserManager
+
+        参数:
+            config_loader: ConfigLoader 实例（已加载配置）
+            manager: ParserManager 实例
+
+        返回:
+            成功注册的解析器数量
+        """
+        if not config_loader or not manager:
+            return 0
+
+        parses = getattr(config_loader, "parses", [])
+        return ParsesLoader.load_into_manager(parses, manager)

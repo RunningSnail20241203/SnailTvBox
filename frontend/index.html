@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>TVBox - Video Player</title>
+
+  <!-- Google Fonts: Inter + Noto Sans SC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS: Base tokens first, then components -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/focus.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/tabs.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+
+  <!-- App Shell -->
+  <div id="app" style="display:flex;flex-direction:column;height:100vh;width:100%;overflow:hidden;">
+
+    <!-- Top Tab Bar -->
+    <nav class="tab-bar" data-focus-zone="tab-bar">
+      <div class="tab-bar-list">
+        <div class="tab-item active" data-focusable="true" data-tab="home">
+          <span class="tab-icon">&#127968;</span>
+          <span class="tab-label">首页</span>
+        </div>
+        <div class="tab-item" data-focusable="true" data-tab="search">
+          <span class="tab-icon">&#128269;</span>
+          <span class="tab-label">搜索</span>
+        </div>
+
+        <div class="tab-item" data-focusable="true" data-tab="settings">
+          <span class="tab-icon">&#9881;</span>
+          <span class="tab-label">设置</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Sliding Content Container -->
+    <main id="page-container" class="page-container" style="flex:1;overflow:hidden;">
+
+      <!-- Page 0: Home -->
+      <section id="home-page" class="page-section home-page" data-focus-zone="home">
+        <!-- Source bar -->
+        <div class="source-bar">
+          <div class="source-selector-wrap" style="position:relative;">
+            <button class="source-selector btn" data-focusable="true">
+              <span class="source-name">极光影视</span>
+              <span class="source-arrow">&#9660;</span>
+            </button>
+            <div class="source-dropdown hidden" data-focus-zone="source-dropdown"></div>
+          </div>
+          <div style="font-size:var(--font-size-xs);color:var(--text-tertiary);">TvBox v1.0</div>
+        </div>
+
+        <!-- Category sub-tabs -->
+        <div class="category-bar">
+          <div class="sub-tab-bar" data-focus-zone="category-tabs"></div>
+        </div>
+
+        <!-- Video grid -->
+        <div class="video-grid" data-focus-zone="home-grid"></div>
+      </section>
+
+      <!-- Page 1: Search -->
+      <section id="search-page" class="page-section search-page" data-focus-zone="search">
+        <!-- Left column: search input + keyboard -->
+        <div class="search-input-column">
+          <div class="search-input-wrap" data-focus-zone="search-input">
+            <span class="search-icon">&#128269;</span>
+            <input type="text" class="search-input" placeholder="输入搜索关键词..." data-focusable="true" autocomplete="off">
+            <button class="search-clear-btn btn" data-focusable="true">&#10005;</button>
+          </div>
+          <div class="virtual-keyboard" data-focus-zone="search-keyboard"></div>
+        </div>
+
+        <!-- Middle column: search history -->
+        <div class="search-history-column" data-focus-zone="search-history">
+          <div class="history-header">
+            <span class="history-title">搜索历史</span>
+            <button class="history-clear-btn btn" data-focusable="true">清空</button>
+          </div>
+          <div class="history-list"></div>
+        </div>
+
+        <!-- Right column: search results -->
+        <div class="search-results-column" data-focus-zone="search-results">
+          <div class="results-header">搜索结果</div>
+          <div class="results-list">
+            <div class="empty-state">
+              <div class="empty-icon">&#128269;</div>
+              <div class="empty-text">输入关键词开始搜索</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 2: Favorites (placeholder) -->
+      <section id="favorites-page" class="page-section" data-focus-zone="favorites" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:var(--bg-primary);">
+        <div class="empty-state">
+          <div class="empty-icon">&#10084;</div>
+          <div class="empty-text">暂无收藏内容</div>
+          <div style="font-size:var(--font-size-sm);color:var(--text-tertiary);margin-top:var(--space-sm);">在视频详情页点击收藏按钮添加</div>
+        </div>
+      </section>
+
+      <!-- Page 3: Settings -->
+      <section id="settings-page" class="page-section settings-page" data-focus-zone="settings">
+        <!-- Left menu -->
+        <div class="settings-menu" data-focus-zone="settings-menu">
+          <div class="settings-menu-title">设置</div>
+        </div>
+
+        <!-- Right detail -->
+        <div class="settings-detail" data-focus-zone="settings-detail"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Player Detail Overlay (hidden by default) -->
+  <div id="player-backdrop" class="player-backdrop hidden"></div>
+  <div id="player-overlay" class="player-overlay hidden" data-focus-zone="player">
+    <!-- Player header -->
+    <div class="player-header">
+      <button class="player-back-btn btn" data-focusable="true" title="返回">&#8592;</button>
+      <div class="player-header-title">视频标题</div>
+    </div>
+
+    <!-- Player content: left video + right info -->
+    <div class="player-content">
+      <!-- Left: video player area (60%) -->
+      <div class="player-video-area">
+        <div class="player-screen">
+          <div class="player-placeholder">
+            <div class="play-icon">&#9654;</div>
+            <div>点击播放</div>
+          </div>
+        </div>
+        <!-- Player controls -->
+        <div class="player-controls" data-focus-zone="player-controls">
+          <button class="control-btn play-pause btn" data-focusable="true" title="播放/暂停">&#9654;</button>
+          <span class="time-display">00:00 / 07:00</span>
+          <div class="progress-bar" data-focusable="true">
+            <div class="progress-fill"></div>
+          </div>
+          <button class="control-btn mute-btn btn" data-focusable="true" title="静音">&#128266;</button>
+          <button class="control-btn btn" data-focusable="true" title="下一个">&#9655;&#9655;</button>
+        </div>
+      </div>
+
+      <!-- Right: info panel -->
+      <div class="player-info-panel" data-focus-zone="player-info"></div>
+    </div>
+
+    <!-- Bottom: route tabs + episode grid -->
+    <div class="player-bottom" data-focus-zone="player-episodes">
+      <div class="route-tabs-container">
+        <div class="route-tab-bar"></div>
+        <div class="episode-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript: load order matters -->
+  <script src="js/focus-manager.js"></script>
+  <script src="js/virtual-list.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/home.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/settings.js"></script>
+
+</body>
+</html>

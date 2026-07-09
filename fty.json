@@ -1,0 +1,547 @@
+{
+  "sites": [
+    {
+      "key": "local_api",
+      "name": "🆕本地测试API站",
+      "type": 1,
+      "api": "http://localhost:8899/api.php",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 1
+    },
+    {
+      "key": "site_001",
+      "name": "虾米影视",
+      "type": 3,
+      "api": "csp_Xiami",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_002",
+      "name": "饭团影视",
+      "type": 3,
+      "api": "csp_Fantuan",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_003",
+      "name": "毒舌电影",
+      "type": 3,
+      "api": "csp_Dushe",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_004",
+      "name": "爱人影视",
+      "type": 3,
+      "api": "csp_Airen",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_005",
+      "name": "非凡影视",
+      "type": 3,
+      "api": "csp_Feifan",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_006",
+      "name": "天天影视",
+      "type": 3,
+      "api": "csp_Tiantian",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_007",
+      "name": "大师兄影视",
+      "type": 3,
+      "api": "csp_Dashixiong",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_008",
+      "name": "陈二狗影视",
+      "type": 3,
+      "api": "csp_Chengou",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_009",
+      "name": "宇宙影视",
+      "type": 3,
+      "api": "csp_Yuzhou",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_010",
+      "name": "北极狐影视",
+      "type": 3,
+      "api": "csp_Beijihu",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_011",
+      "name": "夜猫子影视",
+      "type": 3,
+      "api": "csp_Yemaozi",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_012",
+      "name": "牧羊人影视",
+      "type": 3,
+      "api": "csp_Muyangren",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_013",
+      "name": "蓝光影视网",
+      "type": 1,
+      "api": "https://api.bluemovie.cn/proiect/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_014",
+      "name": "高清资源站",
+      "type": 1,
+      "api": "https://api.hdresource.com/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_015",
+      "name": "极速影视库",
+      "type": 1,
+      "api": "https://api.jisuys.com/vod/",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_016",
+      "name": "爱看影院",
+      "type": 1,
+      "api": "https://api.aikan.tv/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_017",
+      "name": "达达影视",
+      "type": 1,
+      "api": "https://api.dadays.cn/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_018",
+      "name": "追风影视",
+      "type": 1,
+      "api": "https://api.zhuifengys.com/vod/",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_019",
+      "name": "月亮影视",
+      "type": 1,
+      "api": "https://api.moonyingshi.cn/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_020",
+      "name": "星光影院",
+      "type": 1,
+      "api": "https://api.xingguangtv.com/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_021",
+      "name": "海洋影视",
+      "type": 1,
+      "api": "https://api.oceanys.cn/vod/",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_022",
+      "name": "森林影院",
+      "type": 1,
+      "api": "https://api.foresttv.com/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_023",
+      "name": "火焰影视",
+      "type": 1,
+      "api": "https://api.fireys.cn/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_024",
+      "name": "大地影院",
+      "type": 1,
+      "api": "https://api.earthtv.com/vod/",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_025",
+      "name": "天空影视网",
+      "type": 0,
+      "api": "https://api.skyys.cn/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_026",
+      "name": "白云影视",
+      "type": 0,
+      "api": "https://api.baiyunys.com/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_027",
+      "name": "彩虹影院",
+      "type": 0,
+      "api": "https://api.caihongtv.cn/xml/vod",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_028",
+      "name": "清风影视",
+      "type": 0,
+      "api": "https://api.qingfengys.com/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_029",
+      "name": "明月影院",
+      "type": 0,
+      "api": "https://api.mingyuetv.cn/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_030",
+      "name": "星辰影视",
+      "type": 0,
+      "api": "https://api.xingchenys.com/xml/vod",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_031",
+      "name": "晨曦影院",
+      "type": 0,
+      "api": "https://api.chenxitv.cn/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_032",
+      "name": "晚霞影视",
+      "type": 0,
+      "api": "https://api.wanxiays.com/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_033",
+      "name": "蜗牛影院",
+      "type": 3,
+      "api": "csp_Woniu",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_034",
+      "name": "蚂蚁影视",
+      "type": 3,
+      "api": "csp_Mayi",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_035",
+      "name": "蜜蜂影院",
+      "type": 3,
+      "api": "csp_Mifeng",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_036",
+      "name": "蝴蝶影视",
+      "type": 3,
+      "api": "csp_Hudie",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_037",
+      "name": "蜻蜓影院",
+      "type": 3,
+      "api": "csp_Qingting",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_038",
+      "name": "蜘蛛影视",
+      "type": 3,
+      "api": "csp_Zhizhu",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_039",
+      "name": "熊猫影院",
+      "type": 3,
+      "api": "csp_Xiongmao",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_040",
+      "name": "老虎影视",
+      "type": 3,
+      "api": "csp_Laohu",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_041",
+      "name": "兔子影院",
+      "type": 3,
+      "api": "csp_Tuzi",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_042",
+      "name": "乌龟影视",
+      "type": 3,
+      "api": "csp_Wugui",
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_043",
+      "name": "老鹰影院",
+      "type": 1,
+      "api": "https://api.laoyingtv.cn/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_044",
+      "name": "孔雀影视",
+      "type": 1,
+      "api": "https://api.kongqueys.com/vod/",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_045",
+      "name": "凤凰影院",
+      "type": 0,
+      "api": "https://api.fenghuangtv.cn/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_046",
+      "name": "麒麟影视",
+      "type": 0,
+      "api": "https://api.qilinys.com/xml/vod",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0,
+      "ext": ""
+    },
+    {
+      "key": "site_047",
+      "name": "玄武影院",
+      "type": 0,
+      "api": "https://api.xuanwutv.cn/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": ""
+    },
+    {
+      "key": "site_048",
+      "name": "朱雀影视",
+      "type": 0,
+      "api": "https://api.zhuqueys.com/xml/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0,
+      "ext": ""
+    }
+  ],
+  "lives": [
+    {
+      "group": "央视频道",
+      "channels": [
+        {
+          "name": "CCTV-1 综合",
+          "url": "http://example.com/cctv1.m3u8"
+        },
+        {
+          "name": "CCTV-2 财经",
+          "url": "http://example.com/cctv2.m3u8"
+        },
+        {
+          "name": "CCTV-3 综艺",
+          "url": "http://example.com/cctv3.m3u8"
+        },
+        {
+          "name": "CCTV-5 体育",
+          "url": "http://example.com/cctv5.m3u8"
+        },
+        {
+          "name": "CCTV-6 电影",
+          "url": "http://example.com/cctv6.m3u8"
+        }
+      ]
+    },
+    {
+      "group": "卫视频道",
+      "channels": [
+        {
+          "name": "湖南卫视",
+          "url": "http://example.com/hunan.m3u8"
+        },
+        {
+          "name": "浙江卫视",
+          "url": "http://example.com/zhejiang.m3u8"
+        },
+        {
+          "name": "江苏卫视",
+          "url": "http://example.com/jiangsu.m3u8"
+        },
+        {
+          "name": "东方卫视",
+          "url": "http://example.com/dongfang.m3u8"
+        },
+        {
+          "name": "北京卫视",
+          "url": "http://example.com/beijing.m3u8"
+        }
+      ]
+    }
+  ],
+  "spider": "",
+  "wallpaper": "https://picsum.photos/seed/tvbox_wall/1920/1080.jpg"
+}
