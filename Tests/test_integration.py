@@ -7,7 +7,7 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from server import start_server, stop_server
 from utils.config_loader import ConfigLoader
@@ -23,7 +23,7 @@ def test_source_types():
     print("=" * 60)
 
     config = ConfigLoader()
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fty.json")
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fty.json")
     config.load_from_file(config_path)
 
     sources = config.sites
@@ -156,7 +156,7 @@ def test_spider_creation():
             return MockSpider()
 
     config = ConfigLoader()
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fty.json")
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fty.json")
     config.load_from_file(config_path)
 
     # 测试第1个源（json类型）

@@ -13,7 +13,7 @@ Parses 解析器系统端到端集成测试
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.config_loader import ConfigLoader
 from utils.parses_loader import ParsesLoader
@@ -54,7 +54,7 @@ def test_config_loading(runner):
     print("=" * 60)
 
     loader = ConfigLoader()
-    result = loader.load_from_file("jsm.json")
+    result = loader.load_from_file(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "jsm.json"))
     runner.assert_true(result, "ConfigLoader 成功加载 jsm.json")
     runner.assert_true(len(loader.parses) > 0, f"parses 数量 > 0 (实际 {len(loader.parses)})")
     return loader

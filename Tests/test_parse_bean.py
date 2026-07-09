@@ -6,7 +6,7 @@ ParseBean 和 ConfigLoader parses 解析测试
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models.parse_bean import ParseBean
 from utils.config_loader import ConfigLoader
@@ -47,7 +47,7 @@ def test_config_loader_parses():
     print("=" * 60)
 
     loader = ConfigLoader()
-    result = loader.load_from_file("jsm.json")
+    result = loader.load_from_file(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "jsm.json"))
 
     assert result == True, "配置加载失败"
     assert len(loader.parses) > 0, "parses 为空"

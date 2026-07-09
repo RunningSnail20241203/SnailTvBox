@@ -3,9 +3,14 @@
 验证各个接口的返回数据格式是否正确
 """
 
+import sys
+import os
 import json
 import time
 import requests
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from server.mock_api_server import start_server, stop_server, SERVER_PORT
 
 BASE_URL = f"http://localhost:{SERVER_PORT}"

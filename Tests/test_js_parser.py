@@ -8,7 +8,7 @@ JsVariableParser 真实地址测试
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from parsers import JsVariableParser, DirectParser, ParserManager
 

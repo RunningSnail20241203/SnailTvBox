@@ -31,16 +31,17 @@ Learn/
 ├── main.py                  # 项目入口文件，启动命令行界面
 ├── demo_play.py             # 播放流程演示脚本
 ├── demo_parses.py           # Parses 解析器系统演示
-├── test_models.py           # 数据模型单元测试
-├── test_mock_api.py         # 模拟API服务器测试
-├── test_json_spider.py      # JsonSpider 单元测试
-├── test_integration.py      # 端到端集成测试
-├── test_parsers.py          # 解析器架构测试
-├── test_js_parser.py        # JS变量解析器测试
-├── test_player.py           # 播放器模块测试
-├── test_full_flow.py        # 完整播放流程测试
-├── test_parses_system.py    # Parses 系统测试
-├── test_parses_integration.py # Parses 端到端集成测试
+├── Tests/                   # 测试用例目录
+│   ├── test_models.py       # 数据模型单元测试
+│   ├── test_mock_api.py     # 模拟API服务器测试
+│   ├── test_json_spider.py  # JsonSpider 单元测试
+│   ├── test_integration.py  # 端到端集成测试
+│   ├── test_parsers.py      # 解析器架构测试
+│   ├── test_js_parser.py    # JS变量解析器测试
+│   ├── test_player.py       # 播放器模块测试
+│   ├── test_full_flow.py    # 完整播放流程测试
+│   ├── test_parses_system.py # Parses 系统测试
+│   └── test_parses_integration.py # Parses 端到端集成测试
 ├── fty.json                 # TvBox 配置文件（48个视频源）
 ├── requirements.txt         # Python 依赖
 ├── README.md                # 项目说明文档
@@ -83,12 +84,12 @@ Learn/
 | 文件 | 作用 |
 |------|------|
 | `main.py` | 程序入口，解析命令行参数，启动 CliApp |
-| `test_models.py` | 数据模型单元测试，验证 SourceBean 和 VodInfo 的功能 |
-| `test_mock_api.py` | 模拟API服务器测试，验证各接口返回格式是否正确 |
-| `test_json_spider.py` | JsonSpider 单元测试，验证 JSON 接口爬虫各功能 |
-| `test_integration.py` | 端到端集成测试，验证爬虫与界面的完整交互 |
-| `test_parses_system.py` | Parses 系统测试，验证解析器基类、各类型解析器及 flag 匹配 |
-| `test_parses_integration.py` | Parses 端到端集成测试，验证 ParsesLoader 加载与解析完整流程 |
+| `Tests/test_models.py` | 数据模型单元测试，验证 SourceBean 和 VodInfo 的功能 |
+| `Tests/test_mock_api.py` | 模拟API服务器测试，验证各接口返回格式是否正确 |
+| `Tests/test_json_spider.py` | JsonSpider 单元测试，验证 JSON 接口爬虫各功能 |
+| `Tests/test_integration.py` | 端到端集成测试，验证爬虫与界面的完整交互 |
+| `Tests/test_parses_system.py` | Parses 系统测试，验证解析器基类、各类型解析器及 flag 匹配 |
+| `Tests/test_parses_integration.py` | Parses 端到端集成测试，验证 ParsesLoader 加载与解析完整流程 |
 | `demo_parses.py` | Parses 解析器系统演示脚本，展示三种解析器的使用 |
 | `source_bean.py` | 定义视频源的数据结构，对应配置文件中的 sites 数组元素 |
 | `vod_info.py` | 定义视频详情的数据结构，包含播放线路解析功能 |
@@ -146,16 +147,16 @@ python main.py https://example.com/config.json
 
 ```bash
 # 1. 数据模型测试（验证 SourceBean 和 VodInfo）
-python test_models.py
+python Tests/test_models.py
 
 # 2. 模拟 API 服务器测试（验证本地服务器接口）
-python test_mock_api.py
+python Tests/test_mock_api.py
 
 # 3. JsonSpider 单元测试（验证 JSON 接口爬虫）
-python test_json_spider.py
+python Tests/test_json_spider.py
 
 # 4. 端到端集成测试（验证完整流程）
-python test_integration.py
+python Tests/test_integration.py
 ```
 
 **建议按顺序运行，逐步验证各个模块的功能。**
@@ -334,7 +335,7 @@ resp.encoding = resp.apparent_encoding
 #### 1. 测试模拟 API 服务器
 
 ```bash
-python test_mock_api.py
+python Tests/test_mock_api.py
 ```
 
 这个脚本会：
@@ -346,7 +347,7 @@ python test_mock_api.py
 #### 2. 测试 JsonSpider 单元
 
 ```bash
-python test_json_spider.py
+python Tests/test_json_spider.py
 ```
 
 这个脚本会：
@@ -359,7 +360,7 @@ python test_json_spider.py
 #### 3. 端到端集成测试
 
 ```bash
-python test_integration.py
+python Tests/test_integration.py
 ```
 
 这个脚本验证从配置加载到爬虫创建再到数据获取的完整流程，包括：
@@ -505,7 +506,7 @@ VideoPlayer 检测系统可用播放器
 #### 1. 测试解析器架构
 
 ```bash
-python test_parsers.py
+python Tests/test_parsers.py
 ```
 
 验证：
@@ -517,7 +518,7 @@ python test_parsers.py
 #### 2. 测试 JS 变量解析器（真实地址）
 
 ```bash
-python test_js_parser.py
+python Tests/test_js_parser.py
 ```
 
 用真实的 phimgood.com 分享页测试，验证能否提取出 m3u8 地址。
@@ -525,7 +526,7 @@ python test_js_parser.py
 #### 3. 测试播放器模块
 
 ```bash
-python test_player.py
+python Tests/test_player.py
 ```
 
 检测系统安装的播放器，并用真实视频地址测试播放。
@@ -706,7 +707,7 @@ class CliApp:
 #### 1. 测试 Parses 系统
 
 ```bash
-python test_parses_system.py
+python Tests/test_parses_system.py
 ```
 
 验证：
@@ -719,7 +720,7 @@ python test_parses_system.py
 #### 2. 测试 Parses 端到端集成
 
 ```bash
-python test_parses_integration.py
+python Tests/test_parses_integration.py
 ```
 
 验证：

@@ -7,7 +7,7 @@ JsonSpider 测试脚本
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from spiders.json_spider import JsonSpider
 from server.mock_api_server import start_server, stop_server, SERVER_PORT

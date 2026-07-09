@@ -7,7 +7,7 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models.source_bean import SourceBean
 from models.vod_info import VodInfo
@@ -251,7 +251,7 @@ def test_config_loader():
     print("=" * 60)
 
     try:
-        config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fty.json")
+        config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fty.json")
 
         assert os.path.exists(config_path), f"配置文件不存在: {config_path}"
 
